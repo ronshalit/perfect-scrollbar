@@ -6,7 +6,9 @@
   // The default settings for the plugin
   var defaultSettings = {
     wheelSpeed: 10,
-    wheelPropagation: false
+    wheelPropagation: false,
+    scrollx: true,
+    scrolly: true
   };
 
   $.fn.perfectScrollbar = function (suppliedSettings, option) {
@@ -41,8 +43,8 @@
       }
 
       var $this = $(this).addClass('ps-container'),
-          $scrollbarX = $("<div class='ps-scrollbar-x'></div>").appendTo($this),
-          $scrollbarY = $("<div class='ps-scrollbar-y'></div>").appendTo($this),
+          $scrollbarX = $("<div class='ps-scrollbar-x'></div>"),
+          $scrollbarY = $("<div class='ps-scrollbar-y'></div>"),
           containerWidth,
           containerHeight,
           contentWidth,
@@ -53,7 +55,12 @@
           scrollbarYHeight,
           scrollbarYTop,
           scrollbarYRight = parseInt($scrollbarY.css('right'), 10);
-
+      
+      if (settings.scrollx)
+          $scrollbarX.appendTo($this);
+      if (settings.scrolly)
+          $scrollbarY.appendTo($this);
+            
       var updateContentScrollTop = function () {
         var scrollTop = parseInt(scrollbarYTop * contentHeight / containerHeight, 10);
         $this.scrollTop(scrollTop);
@@ -195,6 +202,9 @@
 
       // bind handlers
       var bindMouseWheelHandler = function () {
+        // don't scroll with the mouse if the settings prevent scrolling on the y axis
+        if (!settings.scrolly)
+              return;
         var shouldPreventDefault = function (deltaX, deltaY) {
           var scrollTop = $this.scrollTop();
           if (scrollTop === 0 && deltaY > 0 && deltaX === 0) {
